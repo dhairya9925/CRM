@@ -1,0 +1,150 @@
+/* Apex CRM Canonical Design Tokens & System Styles
+   Theme: Editorial & Refined — Dark Interface System
+   Specification: /home/dhairya/Project/CRM/frontend/FRONTEND_DESIGN.md
+*/
+
+:root {
+  /* Surfaces and Backgrounds */
+  --bg-canvas: #171614;
+  --bg-sidebar: #121210;
+  --bg-surface: #201F1C;
+  --bg-surface-hover: #292722;
+  --bg-surface-active: #302D27;
+  --bg-input: #191815;
+  --bg-overlay: rgba(12, 11, 10, 0.78);
+  --bg-tooltip: #292722;
+
+  /* Typography Colors */
+  --text-primary: #EAE5DC;
+  --text-secondary: #B0AAA0;
+  --text-muted: #827C73;
+  --text-disabled: #625D56;
+  --text-on-accent: #21180F;
+
+  /* Borders & Dividers */
+  --border-default: #39362F;
+  --border-subtle: #2D2B26;
+  --border-strong: #514B40;
+  --border-focus: #C49A62;
+
+  /* Primary Accent: Muted Amber */
+  --accent-primary: #C49A62;
+  --accent-hover: #D1AA79;
+  --accent-muted: #3A3023;
+  --accent-border: #776044;
+
+  /* Semantic Colors */
+  --semantic-success-fg: #91B69A;
+  --semantic-success-bg: #253329;
+  --semantic-warning-fg: #D4B16F;
+  --semantic-warning-bg: #393020;
+  --semantic-error-fg: #D58D83;
+  --semantic-error-bg: #3A2725;
+  --semantic-info-fg: #A5B3C0;
+  --semantic-info-bg: #292F34;
+  --semantic-neutral-fg: #B0AAA0;
+  --semantic-neutral-bg: #302E29;
+
+  /* Corner Radius */
+  --radius-xs: 4px;
+  --radius-sm: 5px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-full: 9999px;
+
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Transitions */
+  --transition-fast: 120ms ease;
+  --transition-normal: 180ms ease;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Tabular Numerals for Metrics & Financial Data */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Standard Button Reset & Base */
+button {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 550;
+  cursor: pointer;
+  border: none;
+  background: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Inputs, Textareas, Selects */
+input, select, textarea {
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text-primary);
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--border-focus);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--text-muted);
+}
+
+/* Custom Minimalist Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+}
