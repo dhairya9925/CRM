@@ -26,9 +26,10 @@ All active endpoints, authentication mechanisms, request/response models, and ro
 - `GET /api/health`: Health check (DB ping, version, status).
 
 #### Authentication (`/api/v1/auth`)
-- `POST /api/v1/auth/login`: Authenticate with email/password; returns access & refresh tokens, sets HttpOnly cookie.
+- `POST /api/v1/auth/signup`: Public user self-registration (assigns `sales_rep` role, returns tokens, sets HttpOnly cookies).
+- `POST /api/v1/auth/login`: Authenticate with email/password; returns access & refresh tokens, sets HttpOnly cookies.
 - `POST /api/v1/auth/refresh`: Rotates refresh token and issues new access token.
-- `POST /api/v1/auth/logout`: Clears session cookie.
+- `POST /api/v1/auth/logout`: Clears session cookies.
 - `GET  /api/v1/auth/me`: Fetches profile of current authenticated user.
 - `PATCH /api/v1/auth/me`: Updates profile (name, password) for authenticated user.
 - `POST /api/v1/auth/register`: Admin-only endpoint to provision users with designated roles.
@@ -40,6 +41,45 @@ All active endpoints, authentication mechanisms, request/response models, and ro
 - `GET    /api/v1/users/{user_id}`: Fetch user by UUID.
 - `PATCH  /api/v1/users/{user_id}`: Update user attributes, role, or active status.
 - `DELETE /api/v1/users/{user_id}`: Soft-deactivate user account.
+
+#### Companies (`/api/v1/companies` — Phase 1)
+- `POST   /api/v1/companies/`: Create company.
+- `GET    /api/v1/companies/`: List companies (search, industry, owner, pagination).
+- `GET    /api/v1/companies/{id}`: Get company detail.
+- `PATCH  /api/v1/companies/{id}`: Update company attributes.
+- `DELETE /api/v1/companies/{id}`: Soft delete company.
+- `GET    /api/v1/companies/{id}/contacts`: Contacts belonging to company.
+- `GET    /api/v1/companies/{id}/deals`: Deals linked to company.
+
+#### Contacts (`/api/v1/contacts` — Phase 1)
+- `POST   /api/v1/contacts/`: Create contact with custom fields.
+- `GET    /api/v1/contacts/`: List contacts (search, filter, sort, paginate).
+- `GET    /api/v1/contacts/{id}`: Get contact detail.
+- `PATCH  /api/v1/contacts/{id}`: Update contact with JSONB merge-patch.
+- `DELETE /api/v1/contacts/{id}`: Soft delete contact.
+- `GET    /api/v1/contacts/{id}/deals`: Deals linked to contact.
+- `GET    /api/v1/contacts/{id}/activities`: Interaction timeline for contact.
+
+#### Leads (`/api/v1/leads` — Phase 2)
+- `POST   /api/v1/leads/`: Create lead.
+- `GET    /api/v1/leads/`: List leads (search, status, source, assigned_to, is_converted).
+- `GET    /api/v1/leads/{id}`: Get lead detail.
+- `PATCH  /api/v1/leads/{id}`: Update lead status/attributes.
+- `DELETE /api/v1/leads/{id}`: Soft delete lead.
+- `PATCH  /api/v1/leads/{id}/assign`: Reassign lead to team member (Manager/Admin).
+- `POST   /api/v1/leads/{id}/convert`: Convert lead to Contact and Deal.
+- `POST   /api/v1/leads/import`: Bulk import leads via CSV file (Manager/Admin).
+- `GET    /api/v1/leads/{id}/activities`: Timeline activities linked to lead.
+
+#### Deals & Sales Pipeline (`/api/v1/deals` — Phase 3)
+- `POST   /api/v1/deals/`: Create deal.
+- `GET    /api/v1/deals/?kanban=false`: List deals with table pagination.
+- `GET    /api/v1/deals/?kanban=true`: Group deals by stage for Kanban board with pipeline totals.
+- `GET    /api/v1/deals/{id}`: Get deal detail.
+- `PATCH  /api/v1/deals/{id}`: Update deal info.
+- `PATCH  /api/v1/deals/{id}/stage`: Move deal stage (logs stage transition activity).
+- `DELETE /api/v1/deals/{id}`: Soft delete deal.
+- `GET    /api/v1/deals/{id}/activities`: Activity timeline for deal.
 
 ---
 
@@ -69,7 +109,6 @@ uv run alembic upgrade head
 cd /home/dhairya/Project/CRM/backend
 uv run python scripts/seed_admin.py
 ```
-Default credentials: `admin@crm.com` / `Admin@123456`.
 
 ---
 

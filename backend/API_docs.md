@@ -44,6 +44,32 @@
 
 ## 3. Auth Endpoints (`/api/v1/auth`)
 
+### 3.0 User Public Signup / Registration
+- **Endpoint:** `POST /api/v1/auth/signup`
+- **Auth:** Public
+- **Description:** Allows a new user to self-register. Creates account with `sales_rep` role and returns access & refresh tokens, while setting HttpOnly auth cookies.
+- **Request Body:**
+  ```json
+  {
+    "full_name": "Alex Mercer",
+    "email": "alex@crm.com",
+    "password": "SecurePassword123!"
+  }
+  ```
+- **Response (201 Created):**
+  ```json
+  {
+    "access_token": "eyJhbGciOiJIUzI1NiIsIn...",
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsIn...",
+    "token_type": "bearer",
+    "expires_in": 900
+  }
+  ```
+- **Cookies Set:** `access_token`, `refresh_token`
+- **Error Responses:**
+  - `409 Conflict`: Email already registered.
+  - `422 Unprocessable Entity`: Validation failure (short password, invalid email).
+
 ### 3.1 User Login
 - **Endpoint:** `POST /api/v1/auth/login`
 - **Auth:** Public
@@ -265,8 +291,285 @@
 
 ---
 
-## 5. Seed Credentials (Development)
+## 5. Company Management Endpoints (`/api/v1/companies`)
+
+### 5.1 Create Company
+- **Endpoint:** `POST /api/v1/companies/`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Request Body:**
+  ```json
+  {
+    "name": "Acme Innovations Ltd",
+    "website": "https://acme.com",
+    "industry": "Software",
+    "phone": "+1 555-0199",
+    "address": "100 Market St, San Francisco, CA"
+  }
+  ```
+- **Response (201 Created):** `CompanyResponse`
+
+### 5.2 List Companies
+- **Endpoint:** `GET /api/v1/companies/`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Query Parameters:** `search`, `industry`, `owner_id`, `page` (default: 1), `page_size` (default: 20)
+- **Response (200 OK):** `Page[CompanyResponse]`
+
+### 5.3 Get Company by ID
+- **Endpoint:** `GET /api/v1/companies/{company_id}`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Response (200 OK):** `CompanyResponse`
+
+### 5.4 Update Company
+- **Endpoint:** `PATCH /api/v1/companies/{company_id}`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Response (200 OK):** `CompanyResponse`
+
+### 5.5 Delete Company
+- **Endpoint:** `DELETE /api/v1/companies/{company_id}`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Response (200 OK):** `{"message": "Company deleted successfully"}`
+
+### 5.6 Get Company Contacts
+- **Endpoint:** `GET /api/v1/companies/{company_id}/contacts`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Response (200 OK):** `List[ContactResponse]`
+
+### 5.7 Get Company Deals
+- **Endpoint:** `GET /api/v1/companies/{company_id}/deals`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Response (200 OK):** `List[DealResponse]`
+
+---
+
+## 6. Contact Management Endpoints (`/api/v1/contacts`)
+
+### 6.1 Create Contact
+- **Endpoint:** `POST /api/v1/contacts/`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Request Body:**
+  ```json
+  {
+    "first_name": "Jane",
+    "last_name": "Doe",
+    "email": "jane.doe@example.com",
+    "phone": "+1 415-555-0123",
+    "company_id": "90d1f3f2-1234-4a5b-bce9-1f48651c6b24",
+    "notes": "Decision maker for CRM rollout",
+    "custom_fields": {
+      "tier": "gold",
+      "lead_score": 92
+    }
+  }
+  ```
+- **Response (201 Created):** `ContactResponse`
+
+### 6.2 List Contacts
+- **Endpoint:** `GET /api/v1/contacts/`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Query Parameters:**
+  - `search` (name, email, phone)
+  - `company_id` (UUID)
+  - `owner_id` (UUID)
+  - `sort_by` (`created_at`, `first_name`, `last_name`)
+  - `sort_order` (`asc`, `desc`)
+  - `page` (int, default: 1)
+  - `page_size` (int, default: 20)
+- **Response (200 OK):** `Page[ContactResponse]`
+
+### 6.3 Get Contact by ID
+- **Endpoint:** `GET /api/v1/contacts/{contact_id}`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Response (200 OK):** `ContactResponse`
+
+### 6.4 Update Contact (with JSONB Merge-Patch)
+- **Endpoint:** `PATCH /api/v1/contacts/{contact_id}`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Description:** Supports partial updating of attributes and automatic shallow merge of `custom_fields`.
+- **Response (200 OK):** `ContactResponse`
+
+### 6.5 Delete Contact
+- **Endpoint:** `DELETE /api/v1/contacts/{contact_id}`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Response (200 OK):** `{"message": "Contact deleted successfully"}`
+
+### 6.6 Contact Deals & Activities
+- `GET /api/v1/contacts/{contact_id}/deals`: Returns linked deals.
+- `GET /api/v1/contacts/{contact_id}/activities`: Returns interaction timeline.
+
+---
+
+## 7. Lead Management Endpoints (`/api/v1/leads`)
+
+### 7.1 Create Lead
+- **Endpoint:** `POST /api/v1/leads/`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Request Body:**
+  ```json
+  {
+    "first_name": "Sarah",
+    "last_name": "Connor",
+    "email": "sarah@cyberdyne.com",
+    "phone": "+1 555-8888",
+    "company_name": "Cyberdyne Systems",
+    "source": "website",
+    "status": "new"
+  }
+  ```
+- **Response (201 Created):** `LeadResponse`
+
+### 7.2 List Leads
+- **Endpoint:** `GET /api/v1/leads/`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Query Parameters:** `search`, `status` (`new`, `contacted`, `qualified`, `lost`), `source`, `assigned_to`, `is_converted`, `page`, `page_size`
+- **Response (200 OK):** `Page[LeadResponse]`
+
+### 7.3 Get / Update / Delete Lead
+- `GET /api/v1/leads/{lead_id}`: Returns lead details.
+- `PATCH /api/v1/leads/{lead_id}`: Updates status, source, or lead contact details. Emits status change Activity.
+- `DELETE /api/v1/leads/{lead_id}`: Soft delete lead.
+
+### 7.4 Reassign Lead (Manager/Admin Only)
+- **Endpoint:** `PATCH /api/v1/leads/{lead_id}/assign`
+- **Auth:** `Bearer <access_token>` (`sales_manager` or `admin` role required)
+- **Request Body:**
+  ```json
+  {
+    "assigned_to": "d577f111-9923-4f59-90c6-e34c5727468f"
+  }
+  ```
+- **Response (200 OK):** Updated `LeadResponse`
+
+### 7.5 Convert Lead to Contact + Deal
+- **Endpoint:** `POST /api/v1/leads/{lead_id}/convert`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Description:** Automatically provisions a `Contact` (and `Company` if named) and creates a new `Deal` in the pipeline. Flags lead as `is_converted=True` and records conversion `Activity`.
+- **Request Body:**
+  ```json
+  {
+    "deal_name": "Cyberdyne Security Suite",
+    "deal_value": 75000.0,
+    "expected_close_date": "2026-12-15",
+    "create_deal": true
+  }
+  ```
+- **Response (200 OK):**
+  ```json
+  {
+    "lead_id": "...",
+    "contact_id": "...",
+    "deal_id": "...",
+    "message": "Lead successfully converted to Contact and Deal"
+  }
+  ```
+
+### 7.6 Bulk Import Leads (CSV)
+- **Endpoint:** `POST /api/v1/leads/import`
+- **Auth:** `Bearer <access_token>` (`sales_manager` or `admin` role required)
+- **Payload:** `multipart/form-data` with `file: <leads.csv>`
+- **Response (200 OK):**
+  ```json
+  {
+    "imported": 45,
+    "failed": 2,
+    "errors": [
+      { "row": 12, "error": "Missing required first_name or last_name", "data": {...} }
+    ]
+  }
+  ```
+
+---
+
+## 8. Deals & Sales Pipeline Endpoints (`/api/v1/deals`)
+
+### 8.1 Create Deal
+- **Endpoint:** `POST /api/v1/deals/`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Request Body:**
+  ```json
+  {
+    "name": "Global Enterprise Expansion",
+    "value": 150000.0,
+    "stage": "qualification",
+    "expected_close_date": "2026-11-30",
+    "contact_id": "...",
+    "company_id": "..."
+  }
+  ```
+- **Response (201 Created):** `DealResponse`
+
+### 8.2 List Deals (Table vs. Kanban Mode)
+- **Endpoint:** `GET /api/v1/deals/`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Query Parameters:**
+  - `kanban`: `true` or `false`
+  - `search`, `stage`, `owner_id`, `company_id`, `contact_id`, `page`, `page_size`
+- **Response when `kanban=true` (200 OK):**
+  ```json
+  {
+    "stages": [
+      {
+        "stage": "qualification",
+        "deal_count": 8,
+        "total_value": 340000.0,
+        "deals": [...]
+      },
+      {
+        "stage": "proposal",
+        "deal_count": 5,
+        "total_value": 210000.0,
+        "deals": [...]
+      },
+      {
+        "stage": "negotiation",
+        "deal_count": 3,
+        "total_value": 175000.0,
+        "deals": [...]
+      },
+      {
+        "stage": "won",
+        "deal_count": 12,
+        "total_value": 580000.0,
+        "deals": [...]
+      },
+      {
+        "stage": "lost",
+        "deal_count": 4,
+        "total_value": 120000.0,
+        "deals": [...]
+      }
+    ],
+    "total_pipeline_value": 725000.0
+  }
+  ```
+- **Response when `kanban=false` (200 OK):** `Page[DealResponse]`
+
+### 8.3 Update Deal Stage (Kanban Move)
+- **Endpoint:** `PATCH /api/v1/deals/{deal_id}/stage`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Description:** Progresses a deal to a new stage and automatically logs a `stage_change` activity in the timeline.
+- **Request Body:**
+  ```json
+  {
+    "stage": "proposal"
+  }
+  ```
+- **Response (200 OK):** `DealResponse`
+
+### 8.4 Delete Deal
+- **Endpoint:** `DELETE /api/v1/deals/{deal_id}`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Response (200 OK):** `{"message": "Deal deleted successfully"}`
+
+### 8.5 Deal Activities Timeline
+- **Endpoint:** `GET /api/v1/deals/{deal_id}/activities`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Response (200 OK):** `List[ActivityResponse]`
+
+---
+
+## 9. Seed Credentials (Development)
 
 | Email | Password | Role |
 |---|---|---|
-| `admin@crm.com` | `Admin@123456` | `admin` |
+| `admin@crm.com` | Configured in `.env` (`FIRST_ADMIN_PASSWORD`) | `admin` |
+
