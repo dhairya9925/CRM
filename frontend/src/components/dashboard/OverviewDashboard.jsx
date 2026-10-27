@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CheckCircle2 } from 'lucide-react';
 import StatusBadge from '../ui/StatusBadge';
 import Button from '../ui/Button';
+import { getDashboardSummary, getTasksDueToday } from '../../services/api';
 
 export default function OverviewDashboard({ leads = [], onAddLeadClick }) {
   const [dateFilter, setDateFilter] = useState('month');
   const [tableFilter, setTableFilter] = useState('all');
   const [tableSearch, setTableSearch] = useState('');
+  const [summaryData, setSummaryData] = useState(null);
 
   // Sample follow-ups / tasks
   const [tasks, setTasks] = useState([
@@ -15,6 +17,37 @@ export default function OverviewDashboard({ leads = [], onAddLeadClick }) {
     { id: 't3', title: 'Schedule Q4 pipeline alignment with sales directors', due: 'Tomorrow, 10:00 AM', priority: 'low', company: 'Internal', done: false },
     { id: 't4', title: 'Confirm onboarding milestones with FinTech Global', due: 'Oct 29', priority: 'medium', company: 'FinTech Global', done: true },
   ]);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function loadLiveData() {
+      try {
+        const [sumRes, tasksRes] = await Promise.allSettled([
+          getDashboardSummary(),
+          getTasksDueToday(),
+        ]);
+        if (isMounted) {
+          if (sumRes.status === 'fulfilled' && sumRes.value && typeof sumRes.value === 'object') {
+            setSummaryData(sumRes.value);
+          }
+          if (tasksRes.status === 'fulfilled' && Array.isArray(tasksRes.value) && tasksRes.value.length > 0) {
+            setTasks(tasksRes.value.map(t => ({
+              id: t.id,
+              title: t.title,
+              due: t.due_date ? new Date(t.due_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Today',
+              priority: t.priority || 'medium',
+              company: t.company_name || 'Active Account',
+              done: t.status === 'done',
+            })));
+          }
+        }
+      } catch {
+        // quiet fallback
+      }
+    }
+    loadLiveData();
+    return () => { isMounted = false; };
+  }, []);
 
   const toggleTask = (taskId) => {
     setTasks(tasks.map(t => t.id === taskId ? { ...t, done: !t.done } : t));
@@ -26,7 +59,7 @@ export default function OverviewDashboard({ leads = [], onAddLeadClick }) {
     { name: 'Qualification', count: 12, value: '$380,000', percentage: 40 },
     { name: 'Proposal Sent', count: 9, value: '$450,000', percentage: 65 },
     { name: 'Negotiation', count: 5, value: '$350,000', percentage: 85 },
-    { name: 'Closed Won', count: 14, value: '$284,500', percentage: 100 },
+    { name: 'Closed Won', count: summaryData?.won_deals || 14, value: summaryData?.won_value ? `$${summaryData.won_value.toLocaleString()}` : '$284,500', percentage: 100 },
   ];
 
   // Filter leads for the table

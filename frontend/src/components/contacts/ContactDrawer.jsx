@@ -5,7 +5,6 @@ import {
   Phone,
   Building2,
   DollarSign,
-  Activity,
   Edit3,
   Trash2,
   Calendar,

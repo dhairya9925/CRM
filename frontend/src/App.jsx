@@ -9,6 +9,8 @@ import CompaniesView from './components/companies/CompaniesView';
 import ContactsView from './components/contacts/ContactsView';
 import LeadsView from './components/leads/LeadsView';
 import DealsView from './components/deals/DealsView';
+import TasksActivitiesView from './components/tasks/TasksActivitiesView';
+import ReportsView from './components/reports/ReportsView';
 import { INITIAL_LEADS } from './data/leadsData';
 
 function AuthenticatedApp() {
@@ -115,27 +117,9 @@ function AuthenticatedApp() {
 
           {activeNav === 'deals' && <DealsView />}
 
-          {activeNav === 'tasks' && (
-            <div style={{ padding: '36px 28px', maxWidth: '800px' }}>
-              <h2 style={{ fontSize: '20px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '8px' }}>
-                Tasks & Activities
-              </h2>
-              <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-                Activity tracking and reminders are synchronized with ongoing Leads, Contacts, and Pipeline Deals.
-              </p>
-            </div>
-          )}
+          {activeNav === 'tasks' && <TasksActivitiesView />}
 
-          {activeNav === 'reports' && (
-            <div style={{ padding: '36px 28px', maxWidth: '800px' }}>
-              <h2 style={{ fontSize: '20px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '8px' }}>
-                Performance Reports & Analytics
-              </h2>
-              <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-                View detailed conversion funnels, win-loss distribution, and monthly deal volume under Overview and Deals & Pipeline.
-              </p>
-            </div>
-          )}
+          {activeNav === 'reports' && <ReportsView />}
         </main>
 
         {/* Lead Creation Dialog */}

@@ -5,14 +5,10 @@ import {
   Building2,
   UserCheck,
   Calendar,
-  CheckCircle2,
-  ArrowRight,
   Edit3,
   Trash2,
   Activity,
-  Layers,
 } from 'lucide-react';
-import Button from '../ui/Button';
 import StatusBadge from '../ui/StatusBadge';
 import { getDealActivities, getCompany, getContact } from '../../services/api';
 

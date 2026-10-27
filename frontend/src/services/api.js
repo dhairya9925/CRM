@@ -381,3 +381,117 @@ export async function getUsers() {
     return [];
   }
 }
+
+// ==========================================
+// Tasks & Reminders API (Phase 4)
+// ==========================================
+export async function getTasks(params = {}) {
+  const query = new URLSearchParams();
+  if (params.assigned_to) query.append('assigned_to', params.assigned_to);
+  if (params.status) query.append('status', params.status);
+  if (params.lead_id) query.append('lead_id', params.lead_id);
+  if (params.contact_id) query.append('contact_id', params.contact_id);
+  if (params.deal_id) query.append('deal_id', params.deal_id);
+  if (params.due_today) query.append('due_today', 'true');
+  if (params.overdue) query.append('overdue', 'true');
+  if (params.page) query.append('page', params.page);
+  if (params.page_size) query.append('page_size', params.page_size);
+  const qStr = query.toString() ? `?${query.toString()}` : '';
+  return await request(`/v1/tasks/${qStr}`);
+}
+
+export async function getTask(id) {
+  return await request(`/v1/tasks/${id}`);
+}
+
+export async function createTask(data) {
+  return await request('/v1/tasks/', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function updateTask(id, data) {
+  return await request(`/v1/tasks/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function completeTask(id) {
+  return await request(`/v1/tasks/${id}/complete`, {
+    method: 'PATCH',
+  });
+}
+
+export async function deleteTask(id) {
+  return await request(`/v1/tasks/${id}`, {
+    method: 'DELETE',
+  });
+}
+
+// ==========================================
+// Activities Timeline API (Phase 5)
+// ==========================================
+export async function getActivities(params = {}) {
+  const query = new URLSearchParams();
+  if (params.lead_id) query.append('lead_id', params.lead_id);
+  if (params.contact_id) query.append('contact_id', params.contact_id);
+  if (params.deal_id) query.append('deal_id', params.deal_id);
+  if (params.type) query.append('type', params.type);
+  if (params.limit) query.append('limit', params.limit);
+  const qStr = query.toString() ? `?${query.toString()}` : '';
+  return await request(`/v1/activities/${qStr}`);
+}
+
+export async function getActivity(id) {
+  return await request(`/v1/activities/${id}`);
+}
+
+export async function createActivity(data) {
+  return await request('/v1/activities/', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function updateActivity(id, data) {
+  return await request(`/v1/activities/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteActivity(id) {
+  return await request(`/v1/activities/${id}`, {
+    method: 'DELETE',
+  });
+}
+
+// ==========================================
+// Dashboard & Reports API (Phase 6)
+// ==========================================
+export async function getDashboardSummary() {
+  return await request('/v1/dashboard/summary');
+}
+
+export async function getDashboardLeadsByStatus() {
+  return await request('/v1/dashboard/leads-by-status');
+}
+
+export async function getDashboardLeadsBySource() {
+  return await request('/v1/dashboard/leads-by-source');
+}
+
+export async function getDashboardPipeline() {
+  return await request('/v1/dashboard/pipeline');
+}
+
+export async function getTasksDueToday() {
+  return await request('/v1/dashboard/tasks-due-today');
+}
+
+export async function getTasksOverdue() {
+  return await request('/v1/dashboard/tasks-overdue');
+}
+
