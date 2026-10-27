@@ -5,6 +5,10 @@ import Sidebar from './components/layout/Sidebar';
 import Topbar from './components/layout/Topbar';
 import OverviewDashboard from './components/dashboard/OverviewDashboard';
 import AddLeadModal from './components/dashboard/AddLeadModal';
+import CompaniesView from './components/companies/CompaniesView';
+import ContactsView from './components/contacts/ContactsView';
+import LeadsView from './components/leads/LeadsView';
+import DealsView from './components/deals/DealsView';
 import { INITIAL_LEADS } from './data/leadsData';
 
 function AuthenticatedApp() {
@@ -89,6 +93,7 @@ function AuthenticatedApp() {
         }}
       >
         <Topbar
+          activeNav={activeNav}
           onOpenNewLead={() => setIsModalOpen(true)}
           searchQuery={searchQuery}
           onSearch={setSearchQuery}
@@ -102,13 +107,32 @@ function AuthenticatedApp() {
             />
           )}
 
-          {activeNav !== 'overview' && (
+          {activeNav === 'leads' && <LeadsView />}
+
+          {activeNav === 'contacts' && <ContactsView />}
+
+          {activeNav === 'companies' && <CompaniesView />}
+
+          {activeNav === 'deals' && <DealsView />}
+
+          {activeNav === 'tasks' && (
             <div style={{ padding: '36px 28px', maxWidth: '800px' }}>
               <h2 style={{ fontSize: '20px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '8px' }}>
-                {activeNav.charAt(0).toUpperCase() + activeNav.slice(1)}
+                Tasks & Activities
               </h2>
               <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-                This section is under active management. Navigate to <strong>Overview</strong> for real-time CRM intelligence and leads management.
+                Activity tracking and reminders are synchronized with ongoing Leads, Contacts, and Pipeline Deals.
+              </p>
+            </div>
+          )}
+
+          {activeNav === 'reports' && (
+            <div style={{ padding: '36px 28px', maxWidth: '800px' }}>
+              <h2 style={{ fontSize: '20px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '8px' }}>
+                Performance Reports & Analytics
+              </h2>
+              <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                View detailed conversion funnels, win-loss distribution, and monthly deal volume under Overview and Deals & Pipeline.
               </p>
             </div>
           )}

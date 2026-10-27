@@ -20,6 +20,12 @@ class ActivityCreate(ActivityBase):
     pass
 
 
+class ActivityUpdate(BaseModel):
+    notes: Optional[str] = None
+    outcome: Optional[str] = Field(None, max_length=200)
+    extra_data: Optional[Dict[str, Any]] = None
+
+
 class ActivityResponse(ActivityBase):
     id: uuid.UUID
     performed_by: Optional[uuid.UUID] = None

@@ -81,6 +81,29 @@ All active endpoints, authentication mechanisms, request/response models, and ro
 - `DELETE /api/v1/deals/{id}`: Soft delete deal.
 - `GET    /api/v1/deals/{id}/activities`: Activity timeline for deal.
 
+#### Tasks & Reminders (`/api/v1/tasks` — Phase 4)
+- `POST   /api/v1/tasks/`: Create task.
+- `GET    /api/v1/tasks/`: List tasks (assigned_to, status, lead_id, contact_id, deal_id, due_today, overdue).
+- `GET    /api/v1/tasks/{id}`: Get task detail.
+- `PATCH  /api/v1/tasks/{id}`: Update task attributes.
+- `PATCH  /api/v1/tasks/{id}/complete`: Complete task and auto-log activity.
+- `DELETE /api/v1/tasks/{id}`: Delete task.
+
+#### Activity Timeline (`/api/v1/activities` — Phase 5)
+- `POST   /api/v1/activities/`: Log manual activity (call, email, meeting, note).
+- `GET    /api/v1/activities/`: Filter activities by lead, contact, deal, or type.
+- `GET    /api/v1/activities/{id}`: Get activity detail.
+- `PATCH  /api/v1/activities/{id}`: Update activity notes or outcome.
+- `DELETE /api/v1/activities/{id}`: Delete activity.
+
+#### Dashboard & Reports (`/api/v1/dashboard` — Phase 6)
+- `GET    /api/v1/dashboard/summary`: Executive KPIs (leads, deals, pipeline value, won value, tasks).
+- `GET    /api/v1/dashboard/leads-by-status`: Lead count grouped by status.
+- `GET    /api/v1/dashboard/leads-by-source`: Lead count grouped by acquisition channel.
+- `GET    /api/v1/dashboard/pipeline`: Pipeline distribution grouped by stage.
+- `GET    /api/v1/dashboard/tasks-due-today`: List tasks due today for current user.
+- `GET    /api/v1/dashboard/tasks-overdue`: List overdue tasks for current user.
+
 ---
 
 ## 3. Development Workflow & Commands

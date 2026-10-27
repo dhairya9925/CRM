@@ -3,8 +3,18 @@ import { Search, Plus } from 'lucide-react';
 import Button from '../ui/Button';
 import { checkBackendHealth } from '../../services/api';
 
-export default function Topbar({ onOpenNewLead, onSearch, searchQuery = '' }) {
+export default function Topbar({ onOpenNewLead, onSearch, searchQuery = '', activeNav = 'overview' }) {
   const [backendHealth, setBackendHealth] = useState({ connected: false, checking: true });
+
+  const navLabels = {
+    overview: 'Overview',
+    leads: 'Leads',
+    contacts: 'Contacts',
+    companies: 'Companies',
+    deals: 'Deals & Pipeline',
+    tasks: 'Tasks & Activities',
+    reports: 'Reports',
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -47,7 +57,9 @@ export default function Topbar({ onOpenNewLead, onSearch, searchQuery = '' }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
         <span style={{ color: 'var(--text-muted)' }}>Workspace</span>
         <span style={{ color: 'var(--border-strong)' }}>/</span>
-        <span style={{ color: 'var(--text-primary)', fontWeight: '550' }}>Overview</span>
+        <span style={{ color: 'var(--text-primary)', fontWeight: '550' }}>
+          {navLabels[activeNav] || 'Overview'}
+        </span>
       </div>
 
       {/* Global Search Bar */}

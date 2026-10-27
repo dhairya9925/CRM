@@ -172,3 +172,212 @@ export async function apiConfirmPasswordReset(token, newPassword) {
     }),
   });
 }
+
+// ==========================================
+// Companies API
+// ==========================================
+export async function getCompanies(params = {}) {
+  const query = new URLSearchParams();
+  if (params.search) query.append('search', params.search);
+  if (params.industry) query.append('industry', params.industry);
+  if (params.page) query.append('page', params.page);
+  if (params.page_size) query.append('page_size', params.page_size);
+  const qStr = query.toString() ? `?${query.toString()}` : '';
+  return await request(`/v1/companies/${qStr}`);
+}
+
+export async function getCompany(id) {
+  return await request(`/v1/companies/${id}`);
+}
+
+export async function createCompany(data) {
+  return await request('/v1/companies/', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function updateCompany(id, data) {
+  return await request(`/v1/companies/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteCompany(id) {
+  return await request(`/v1/companies/${id}`, {
+    method: 'DELETE',
+  });
+}
+
+export async function getCompanyContacts(id) {
+  return await request(`/v1/companies/${id}/contacts`);
+}
+
+export async function getCompanyDeals(id) {
+  return await request(`/v1/companies/${id}/deals`);
+}
+
+// ==========================================
+// Contacts API
+// ==========================================
+export async function getContacts(params = {}) {
+  const query = new URLSearchParams();
+  if (params.search) query.append('search', params.search);
+  if (params.company_id) query.append('company_id', params.company_id);
+  if (params.page) query.append('page', params.page);
+  if (params.page_size) query.append('page_size', params.page_size);
+  const qStr = query.toString() ? `?${query.toString()}` : '';
+  return await request(`/v1/contacts/${qStr}`);
+}
+
+export async function getContact(id) {
+  return await request(`/v1/contacts/${id}`);
+}
+
+export async function createContact(data) {
+  return await request('/v1/contacts/', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function updateContact(id, data) {
+  return await request(`/v1/contacts/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteContact(id) {
+  return await request(`/v1/contacts/${id}`, {
+    method: 'DELETE',
+  });
+}
+
+export async function getContactDeals(id) {
+  return await request(`/v1/contacts/${id}/deals`);
+}
+
+export async function getContactActivities(id) {
+  return await request(`/v1/contacts/${id}/activities`);
+}
+
+// ==========================================
+// Leads API
+// ==========================================
+export async function getLeads(params = {}) {
+  const query = new URLSearchParams();
+  if (params.status) query.append('status', params.status);
+  if (params.source) query.append('source', params.source);
+  if (params.search) query.append('search', params.search);
+  if (params.page) query.append('page', params.page);
+  if (params.page_size) query.append('page_size', params.page_size);
+  const qStr = query.toString() ? `?${query.toString()}` : '';
+  return await request(`/v1/leads/${qStr}`);
+}
+
+export async function getLead(id) {
+  return await request(`/v1/leads/${id}`);
+}
+
+export async function createLead(data) {
+  return await request('/v1/leads/', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function updateLead(id, data) {
+  return await request(`/v1/leads/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteLead(id) {
+  return await request(`/v1/leads/${id}`, {
+    method: 'DELETE',
+  });
+}
+
+export async function assignLead(id, userId) {
+  return await request(`/v1/leads/${id}/assign`, {
+    method: 'PATCH',
+    body: JSON.stringify({ assigned_to: userId }),
+  });
+}
+
+export async function convertLead(id, convertData) {
+  return await request(`/v1/leads/${id}/convert`, {
+    method: 'POST',
+    body: JSON.stringify(convertData),
+  });
+}
+
+export async function getLeadActivities(id) {
+  return await request(`/v1/leads/${id}/activities`);
+}
+
+// ==========================================
+// Deals & Sales Pipeline API
+// ==========================================
+export async function getDeals(params = {}) {
+  const query = new URLSearchParams();
+  if (params.kanban) query.append('kanban', 'true');
+  if (params.search) query.append('search', params.search);
+  if (params.stage) query.append('stage', params.stage);
+  if (params.owner_id) query.append('owner_id', params.owner_id);
+  if (params.company_id) query.append('company_id', params.company_id);
+  if (params.contact_id) query.append('contact_id', params.contact_id);
+  if (params.page) query.append('page', params.page);
+  if (params.page_size) query.append('page_size', params.page_size);
+  const qStr = query.toString() ? `?${query.toString()}` : '';
+  return await request(`/v1/deals/${qStr}`);
+}
+
+export async function getDeal(id) {
+  return await request(`/v1/deals/${id}`);
+}
+
+export async function createDeal(data) {
+  return await request('/v1/deals/', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function updateDeal(id, data) {
+  return await request(`/v1/deals/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteDeal(id) {
+  return await request(`/v1/deals/${id}`, {
+    method: 'DELETE',
+  });
+}
+
+export async function updateDealStage(id, stage) {
+  return await request(`/v1/deals/${id}/stage`, {
+    method: 'PATCH',
+    body: JSON.stringify({ stage }),
+  });
+}
+
+export async function getDealActivities(id) {
+  return await request(`/v1/deals/${id}/activities`);
+}
+
+// ==========================================
+// Users API
+// ==========================================
+export async function getUsers() {
+  try {
+    return await request('/v1/users/?limit=100');
+  } catch {
+    return [];
+  }
+}

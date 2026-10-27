@@ -18,6 +18,11 @@ from app.schemas.contact import (
     ContactResponse,
     ContactUpdate,
 )
+from app.schemas.dashboard import (
+    DashboardSummaryResponse,
+    GroupCountData,
+    PipelineStageMetric,
+)
 from app.schemas.deal import (
     DealCreate,
     DealKanbanResponse,
@@ -36,6 +41,11 @@ from app.schemas.lead import (
     LeadResponse,
     LeadUpdate,
 )
+from app.schemas.task import (
+    TaskCreate,
+    TaskResponse,
+    TaskUpdate,
+)
 from app.schemas.user import (
     UserBase,
     UserCreate,
@@ -53,12 +63,14 @@ __all__ = [
     "ContactCreate",
     "ContactResponse",
     "ContactUpdate",
+    "DashboardSummaryResponse",
     "DealCreate",
     "DealKanbanResponse",
     "DealKanbanStage",
     "DealResponse",
     "DealStageUpdate",
     "DealUpdate",
+    "GroupCountData",
     "LeadAssign",
     "LeadConvertRequest",
     "LeadConvertResponse",
@@ -71,8 +83,12 @@ __all__ = [
     "MessageResponse",
     "PasswordResetConfirm",
     "PasswordResetRequest",
+    "PipelineStageMetric",
     "RefreshTokenRequest",
     "SignupRequest",
+    "TaskCreate",
+    "TaskResponse",
+    "TaskUpdate",
     "TokenResponse",
     "UserBase",
     "UserCreate",

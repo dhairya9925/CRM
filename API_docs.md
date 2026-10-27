@@ -567,9 +567,198 @@
 
 ---
 
-## 9. Seed Credentials (Development)
+## 9. Tasks & Reminders Endpoints (`/api/v1/tasks`)
+
+### 9.1 Create Task
+- **Endpoint:** `POST /api/v1/tasks/`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Request Body:**
+  ```json
+  {
+    "title": "Prepare Q4 contract renewal",
+    "description": "Include multi-year discount options",
+    "type": "follow_up",
+    "priority": "high",
+    "status": "pending",
+    "due_date": "2026-11-05T14:00:00Z",
+    "lead_id": null,
+    "contact_id": "c1f7a8b4-0231-482a-9214-41d3bb127810",
+    "deal_id": "d577f111-9923-4f59-90c6-e34c5727468f"
+  }
+  ```
+- **Response (201 Created):** `TaskResponse`
+
+### 9.2 List Tasks
+- **Endpoint:** `GET /api/v1/tasks/`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Query Parameters:**
+  - `assigned_to` (UUID)
+  - `status` (`pending`, `in_progress`, `done`, `cancelled`)
+  - `lead_id` (UUID)
+  - `contact_id` (UUID)
+  - `deal_id` (UUID)
+  - `due_today` (`true` or `false`)
+  - `overdue` (`true` or `false`)
+  - `page` (int, default: 1)
+  - `page_size` (int, default: 20)
+- **Response (200 OK):** `Page[TaskResponse]`
+
+### 9.3 Get Task by ID
+- **Endpoint:** `GET /api/v1/tasks/{task_id}`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Response (200 OK):** `TaskResponse`
+
+### 9.4 Update Task
+- **Endpoint:** `PATCH /api/v1/tasks/{task_id}`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Response (200 OK):** `TaskResponse`
+
+### 9.5 Complete Task
+- **Endpoint:** `PATCH /api/v1/tasks/{task_id}/complete`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Description:** Sets task status to `done` and automatically logs a completion note in the activity timeline.
+- **Response (200 OK):** `TaskResponse`
+
+### 9.6 Delete Task
+- **Endpoint:** `DELETE /api/v1/tasks/{task_id}`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Response (200 OK):** `{"message": "Task deleted successfully"}`
+
+---
+
+## 10. Activity Timeline Endpoints (`/api/v1/activities`)
+
+### 10.1 Log Activity
+- **Endpoint:** `POST /api/v1/activities/`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Request Body:**
+  ```json
+  {
+    "type": "call",
+    "notes": "Discovery call with VP of Sales regarding enterprise tier",
+    "outcome": "Follow-up proposal requested",
+    "lead_id": null,
+    "contact_id": "c1f7a8b4-0231-482a-9214-41d3bb127810",
+    "deal_id": null,
+    "extra_data": {
+      "duration_minutes": 30
+    }
+  }
+  ```
+- **Response (201 Created):** `ActivityResponse`
+
+### 10.2 List Activities
+- **Endpoint:** `GET /api/v1/activities/`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Query Parameters:**
+  - `lead_id` (UUID)
+  - `contact_id` (UUID)
+  - `deal_id` (UUID)
+  - `type` (`call`, `email`, `meeting`, `note`, `status_change`, `stage_change`, `conversion`)
+  - `limit` (int, default: 50)
+- **Response (200 OK):** `List[ActivityResponse]`
+
+### 10.3 Get Activity by ID
+- **Endpoint:** `GET /api/v1/activities/{activity_id}`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Response (200 OK):** `ActivityResponse`
+
+### 10.4 Update Activity
+- **Endpoint:** `PATCH /api/v1/activities/{activity_id}`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Request Body:**
+  ```json
+  {
+    "notes": "Follow-up completed and pricing confirmed",
+    "outcome": "Meeting scheduled",
+    "extra_data": { "duration_minutes": 45 }
+  }
+  ```
+- **Response (200 OK):** `ActivityResponse`
+
+### 10.5 Delete Activity
+- **Endpoint:** `DELETE /api/v1/activities/{activity_id}`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Response (200 OK):** `{"message": "Activity deleted successfully"}`
+
+---
+
+## 11. Dashboard & Reports Endpoints (`/api/v1/dashboard`)
+
+### 11.1 Executive Summary KPIs
+- **Endpoint:** `GET /api/v1/dashboard/summary`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Description:** Aggregates real-time performance indicators scoped to the user role (reps see owned records, managers/admins see organization-wide).
+- **Response (200 OK):**
+  ```json
+  {
+    "total_leads": 42,
+    "new_leads_this_week": 8,
+    "open_deals": 14,
+    "pipeline_value": 725000.0,
+    "won_deals": 12,
+    "won_value": 580000.0,
+    "tasks_due_today": 3,
+    "overdue_tasks": 1
+  }
+  ```
+
+### 11.2 Leads by Status Distribution
+- **Endpoint:** `GET /api/v1/dashboard/leads-by-status`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Response (200 OK):**
+  ```json
+  [
+    { "label": "new", "count": 18 },
+    { "label": "contacted", "count": 12 },
+    { "label": "qualified", "count": 8 },
+    { "label": "lost", "count": 4 }
+  ]
+  ```
+
+### 11.3 Leads by Source Distribution
+- **Endpoint:** `GET /api/v1/dashboard/leads-by-source`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Response (200 OK):**
+  ```json
+  [
+    { "label": "website", "count": 22 },
+    { "label": "referral", "count": 10 },
+    { "label": "ads", "count": 6 },
+    { "label": "cold_outreach", "count": 4 }
+  ]
+  ```
+
+### 11.4 Pipeline Distribution by Stage
+- **Endpoint:** `GET /api/v1/dashboard/pipeline`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Response (200 OK):**
+  ```json
+  [
+    { "stage": "qualification", "deal_count": 8, "total_value": 340000.0 },
+    { "stage": "proposal", "deal_count": 5, "total_value": 210000.0 },
+    { "stage": "negotiation", "deal_count": 3, "total_value": 175000.0 },
+    { "stage": "won", "deal_count": 12, "total_value": 580000.0 },
+    { "stage": "lost", "deal_count": 4, "total_value": 120000.0 }
+  ]
+  ```
+
+### 11.5 Tasks Due Today (Current User)
+- **Endpoint:** `GET /api/v1/dashboard/tasks-due-today`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Response (200 OK):** `List[TaskResponse]`
+
+### 11.6 Overdue Tasks (Current User)
+- **Endpoint:** `GET /api/v1/dashboard/tasks-overdue`
+- **Auth:** `Bearer <access_token>` or cookie
+- **Response (200 OK):** `List[TaskResponse]`
+
+---
+
+## 12. Seed Credentials (Development)
 
 | Email | Password | Role |
 |---|---|---|
 | `admin@crm.com` | Configured in `.env` (`FIRST_ADMIN_PASSWORD`) | `admin` |
+
 
