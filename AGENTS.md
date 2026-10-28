@@ -7,8 +7,7 @@ This document provides context, conventions, and operational instructions for al
 ## 1. Project Overview
 
 - **Frontend:** React + Vite (`/home/dhairya/Project/CRM/frontend`)
-- **Backend:** FastAPI + SQLAlchemy 2.x async + asyncpg + PostgreSQL (`/home/dhairya/Project/CRM/backend`)
-- **Database:** PostgreSQL (`crm_db` on localhost:5432, user `dhairya`)
+- **Database:** PostgreSQL on Supabase (Session Pooler mode via `aws-0-ap-south-1.pooler.supabase.com:5432`)
 - **Package Manager:** `uv` is strictly used for Python. Always run commands using `uv run ...` or `uv add ...`. Do NOT install global packages.
 
 ---
