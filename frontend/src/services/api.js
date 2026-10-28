@@ -1,7 +1,34 @@
 // Apex CRM API Service Layer
 // Communicates with FastAPI backend (/api/v1/...)
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
+function resolveApiBase() {
+  const envApiBase = (import.meta.env.VITE_API_BASE_URL || '').trim();
+  const envBackend = (import.meta.env.VITE_BACKEND_URL || '').trim();
+
+  // 1. Explicit full URL provided in VITE_API_BASE_URL
+  if (envApiBase && /^https?:\/\//i.test(envApiBase)) {
+    return envApiBase.replace(/\/+$/, '');
+  }
+
+  // 2. Full URL provided in VITE_BACKEND_URL
+  if (envBackend && /^https?:\/\//i.test(envBackend)) {
+    const cleanBackend = envBackend.replace(/\/+$/, '');
+    const prefix = (envApiBase && !/^https?:\/\//i.test(envApiBase) ? envApiBase : '/api').replace(/\/+$/, '');
+    if (cleanBackend.endsWith('/api')) {
+      return cleanBackend;
+    }
+    return `${cleanBackend}${prefix.startsWith('/') ? prefix : `/${prefix}`}`;
+  }
+
+  // 3. Fallback for production deployment on Vercel frontend
+  if (typeof window !== 'undefined' && window.location.hostname.includes('crm-assignment-karyu.vercel.app')) {
+    return 'https://crm-backend-007.vercel.app/api';
+  }
+
+  return envApiBase || '/api';
+}
+
+const API_BASE = resolveApiBase();
 
 /**
  * Helper to get stored auth token
@@ -89,7 +116,21 @@ async function request(endpoint, options = {}) {
   }
 
   if (!response.ok) {
-    const errorMessage = data?.detail || data?.message || (typeof data === 'string' ? data : `Error ${response.status}`);
+    let errorMessage = '';
+    if (data && typeof data === 'object') {
+      if (Array.isArray(data.detail)) {
+        errorMessage = data.detail.map((d) => d.msg || JSON.stringify(d)).join(', ');
+      } else {
+        errorMessage = data.detail || data.message || data.error;
+      }
+    } else if (typeof data === 'string' && data.trim()) {
+      errorMessage = data.trim();
+    }
+
+    if (!errorMessage) {
+      errorMessage = `Error ${response.status}: ${response.statusText || 'Request failed'}`;
+    }
+
     const error = new Error(errorMessage);
     error.status = response.status;
     error.data = data;
