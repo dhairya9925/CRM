@@ -1,0 +1,54 @@
+services:
+  # ----------------------------------------------------
+  # Apex CRM FastAPI Backend
+  # ----------------------------------------------------
+  - type: web
+    name: apex-crm-backend
+    env: python
+    rootDir: backend
+    plan: free
+    buildCommand: "pip install -r requirements.txt && alembic upgrade head"
+    startCommand: "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    healthCheckPath: /api/health
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: PROJECT_NAME
+        value: "Apex CRM API"
+      - key: VERSION
+        value: "1.0.0"
+      - key: API_V1_STR
+        value: "/api/v1"
+      - key: DATABASE_URL
+        sync: false # Set in Render dashboard with Supabase Session Pooler URI
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "15"
+      - key: REFRESH_TOKEN_EXPIRE_DAYS
+        value: "7"
+      - key: RESET_TOKEN_EXPIRE_MINUTES
+        value: "15"
+      - key: FIRST_ADMIN_EMAIL
+        value: "admin@crm.com"
+      - key: FIRST_ADMIN_PASSWORD
+        sync: false
+      - key: FIRST_ADMIN_NAME
+        value: "Apex Administrator"
+      - key: BACKEND_CORS_ORIGINS
+        value: "https://apex-crm-frontend.onrender.com,http://localhost:5173"
+
+  # ----------------------------------------------------
+  # Apex CRM React Frontend
+  # ----------------------------------------------------
+  - type: web
+    name: apex-crm-frontend
+    env: static
+    rootDir: frontend
+    plan: free
+    buildCommand: "npm install && npm run build"
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

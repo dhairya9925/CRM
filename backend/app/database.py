@@ -13,6 +13,16 @@ from app.config import settings
 connect_args = {}
 if settings.DATABASE_URL.startswith("sqlite"):
     connect_args = {"check_same_thread": False}
+elif "supabase" in settings.DATABASE_URL.lower() or "pooler" in settings.DATABASE_URL.lower():
+    # Supabase PgBouncer/Supavisor poolers require statement_cache_size=0 for asyncpg
+    connect_args = {
+        "statement_cache_size": 0,
+        "ssl": "require",
+    }
+elif "sslmode=require" in settings.DATABASE_URL:
+    connect_args = {
+        "ssl": "require",
+    }
 
 engine = create_async_engine(
     settings.DATABASE_URL,

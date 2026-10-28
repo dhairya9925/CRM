@@ -22,6 +22,18 @@ class Settings(BaseSettings):
     # Database Configuration
     DATABASE_URL: str = "postgresql+asyncpg://dhairya:8953@localhost:5432/crm_db"
 
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def assemble_db_connection(cls, v: str) -> str:
+        if isinstance(v, str):
+            v_str = v.strip()
+            if v_str.startswith("postgres://"):
+                return v_str.replace("postgres://", "postgresql+asyncpg://", 1)
+            elif v_str.startswith("postgresql://") and not v_str.startswith("postgresql+"):
+                return v_str.replace("postgresql://", "postgresql+asyncpg://", 1)
+            return v_str
+        return v
+
     # CORS Settings
     BACKEND_CORS_ORIGINS: Union[List[str], str] = [
         "http://localhost:5173",
