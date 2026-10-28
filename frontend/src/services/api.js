@@ -1,7 +1,7 @@
 // Apex CRM API Service Layer
 // Communicates with FastAPI backend (/api/v1/...)
 
-const API_BASE = '/api';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
 
 /**
  * Helper to get stored auth token
