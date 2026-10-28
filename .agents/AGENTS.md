@@ -104,6 +104,12 @@ All active endpoints, authentication mechanisms, request/response models, and ro
 - `GET    /api/v1/dashboard/tasks-due-today`: List tasks due today for current user.
 - `GET    /api/v1/dashboard/tasks-overdue`: List overdue tasks for current user.
 
+#### Hardening, Traceability & Security (Phase 7)
+- **Request Tracing:** `RequestIdMiddleware` injects / propagates `X-Request-ID` across all requests/responses.
+- **Throttling (`slowapi`):** 5 req/min on `/api/v1/auth/login`, 3 req/min on `/api/v1/auth/password-reset/request`.
+- **Global Error Format:** Unified JSON error envelope with `detail`, `error`, and `request_id`.
+- **RBAC Matrix:** Strict role enforcement on admin user-management, CSV imports, and lead reassignments.
+
 ---
 
 ## 3. Development Workflow & Commands

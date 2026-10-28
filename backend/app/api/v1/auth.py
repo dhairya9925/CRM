@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.config import settings
 from app.core.dependencies import get_current_active_user, get_db, require_admin
 from app.core.exceptions import CredentialsError
+from app.core.rate_limit import limiter
 from app.models.user import User, UserRole
 from app.schemas.auth import (
     LoginRequest,
@@ -87,6 +88,7 @@ async def register(
     response_model=TokenResponse,
     summary="Authenticate user and issue JWT tokens",
 )
+@limiter.limit("5/minute")
 async def login(
     request: Request,
     response: Response,
@@ -211,7 +213,9 @@ async def logout(
     response_model=MessageResponse,
     summary="Request password reset token",
 )
+@limiter.limit("3/minute")
 async def request_password_reset(
+    request: Request,
     req: PasswordResetRequest,
     db: AsyncSession = Depends(get_db),
 ):

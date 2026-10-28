@@ -5,8 +5,12 @@ from sqlalchemy.pool import NullPool
 
 from app.config import settings
 from app.core.dependencies import get_db
+from app.core.rate_limit import limiter
 from app.database import Base
 from app.main import app
+
+# Disable rate limiter for generic test suite
+limiter.enabled = False
 
 # Create test engine using NullPool so connections are never reused across different event loops
 test_engine = create_async_engine(

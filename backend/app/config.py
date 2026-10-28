@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     VERSION: str = "1.0.0"
     API_V1_STR: str = "/api/v1"
     ENVIRONMENT: str = "development"
+    RATE_LIMITING_ENABLED: bool = True
 
     # JWT Security Settings
     SECRET_KEY: str = "development_secret_key_crm_backend_change_in_production_32bytes_min"

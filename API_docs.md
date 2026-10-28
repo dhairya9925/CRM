@@ -761,4 +761,40 @@
 |---|---|---|
 | `admin@crm.com` | Configured in `.env` (`FIRST_ADMIN_PASSWORD`) | `admin` |
 
+---
+
+## 13. Security, Hardening & Error Envelope (Phase 7)
+
+### 13.1 Request Correlation (`X-Request-ID`)
+- Every HTTP response includes an `X-Request-ID` header.
+- If the incoming client request provides an `X-Request-ID` header, it is echoed back for end-to-end tracing. Otherwise, a UUIDv4 identifier is automatically generated and bound to `request.state.request_id`.
+
+### 13.2 Rate Limiting Policies (`slowapi`)
+Throttling is enforced per client IP address:
+- `POST /api/v1/auth/login`: 5 requests per minute.
+- `POST /api/v1/auth/password-reset/request`: 3 requests per minute.
+- Exceeding the threshold triggers HTTP `429 Too Many Requests`.
+
+### 13.3 Standardized Error Response Format
+All error responses adhere to the unified schema:
+```json
+{
+  "detail": "Resource not found",
+  "error": "NotFoundError",
+  "request_id": "18c41ecb-b592-4ffb-9fad-79924c68d215"
+}
+```
+
+### 13.4 Role-Based Access Control (RBAC) Matrix
+
+| Resource / Action | Sales Rep | Sales Manager | Admin |
+|---|---|---|---|
+| **View Own Assigned Records** | ✅ | ✅ | ✅ |
+| **View Team Records** | ❌ | ✅ | ✅ |
+| **Manage Users (`/api/v1/users`)** | ❌ | ❌ | ✅ |
+| **Register New Users (`/api/v1/auth/register`)** | ❌ | ❌ | ✅ |
+| **Reassign Leads (`/api/v1/leads/{id}/assign`)** | ❌ | ✅ | ✅ |
+| **Bulk Import CSV (`/api/v1/leads/import`)** | ❌ | ✅ | ✅ |
+| **Delete Leads / Deals / Contacts** | ❌ | ❌ | ✅ |
+
 
