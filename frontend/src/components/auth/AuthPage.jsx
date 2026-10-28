@@ -368,10 +368,46 @@ export default function AuthPage() {
                 variant="primary"
                 size="md"
                 isLoading={isLoading}
-                style={{ marginTop: '8px', width: '100%' }}
+                icon={LogIn}
+                style={{
+                  marginTop: '10px',
+                  width: '100%',
+                  height: '40px',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  backgroundColor: 'var(--accent-primary)',
+                  color: 'var(--text-on-accent)',
+                }}
               >
                 Sign in to CRM
               </Button>
+
+              <div
+                style={{
+                  marginTop: '8px',
+                  textAlign: 'center',
+                  fontSize: '12px',
+                  color: 'var(--text-secondary)',
+                }}
+              >
+                Don't have an account?{' '}
+                <button
+                  type="button"
+                  onClick={() => handleTabSwitch('register')}
+                  style={{
+                    color: 'var(--accent-primary)',
+                    fontWeight: '600',
+                    fontSize: '12px',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: 0,
+                    textDecoration: 'underline',
+                  }}
+                >
+                  Create account
+                </button>
+              </div>
             </form>
           )}
 
@@ -449,10 +485,46 @@ export default function AuthPage() {
                 variant="primary"
                 size="md"
                 isLoading={isLoading}
-                style={{ marginTop: '6px', width: '100%' }}
+                icon={UserPlus}
+                style={{
+                  marginTop: '10px',
+                  width: '100%',
+                  height: '40px',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  backgroundColor: 'var(--accent-primary)',
+                  color: 'var(--text-on-accent)',
+                }}
               >
                 Create Account
               </Button>
+
+              <div
+                style={{
+                  marginTop: '8px',
+                  textAlign: 'center',
+                  fontSize: '12px',
+                  color: 'var(--text-secondary)',
+                }}
+              >
+                Already have an account?{' '}
+                <button
+                  type="button"
+                  onClick={() => handleTabSwitch('login')}
+                  style={{
+                    color: 'var(--accent-primary)',
+                    fontWeight: '600',
+                    fontSize: '12px',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: 0,
+                    textDecoration: 'underline',
+                  }}
+                >
+                  Sign in
+                </button>
+              </div>
             </form>
           )}
 
@@ -532,7 +604,7 @@ export default function AuthPage() {
           alignItems: 'center',
           gap: '12px',
           fontSize: '11px',
-          color: 'var(--text-muted)',
+          color: 'black',
         }}
       >
         <span>JWT Authentication</span>

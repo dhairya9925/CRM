@@ -10,6 +10,7 @@ export default function Button({
   icon: Icon,
   className = '',
   type = 'button',
+  style = {},
   ...props
 }) {
   const baseStyles = {
@@ -59,6 +60,7 @@ export default function Button({
     ...baseStyles,
     ...(sizeStyles[size] || sizeStyles.md),
     ...(variantStyles[variant] || variantStyles.primary),
+    ...style,
   };
 
   return (
